@@ -1,168 +1,245 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Text;
+using Microsoft.VisualBasic.FileIO;
 
-namespace MyApp // Note: actual namespace depends on the project name.
+namespace MyApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            //// Entrée des valeurs de l'utilisateur (à modif : tryparse) 
-            //Console.Write("Entrez le premier nombre :");
-            //double nombre1 = double.Parse(Console.ReadLine());
-            //Console.Write("Entrez le deuxième nombre :");
-            //double nombre2 = double.Parse(Console.ReadLine());
 
-            //// Entrée de l'opérateur
-            //Console.WriteLine("Choisissez un opérateur : + , - , * , /");
-            //string operateur = Console.ReadLine();
+            string[] boutons = ["7", "8", "9", "+", "4", "5", "6", "-", "1", "2", "3", "*", "R", "0", "=", "/"];
 
-            ////  Fonctions pour mes opérations de calcul
-            //double Addition(double nombre1, double nombre2)
-            //{ return nombre1 + nombre2; }
+            Console.CursorVisible = false;
+            (int left, int top) = Console.GetCursorPosition();
+            ConsoleKeyInfo key;
 
-            //double Multiplication(double nombre1, double nombre2)
-            //{ return nombre1 * nombre2; }
+            string decorator = "\u001b[45m";
+            int option = 0;
 
-            //double Soustraction(double nombre1, double nombre2)
-            //{ return nombre1 - nombre2; }
+            string operateur = "";
 
-            //double Division(double nombre1, double nombre2)
-            //{ return nombre1 / nombre2; }
+            bool isOver = false;
+            bool isCalculated = false;
+
+            string currentNumber = "";
+            string previousNumber = "";
+            string resultat = "";
+
+            do
+            {
+                Console.SetCursorPosition(left, top);
+
+                Console.WriteLine(resultat);
+
+                Console.Write($"{(option == 0 ? decorator : "")}[ 7 ]\u001b[0m"); // 7
+                Console.Write($"{(option == 1 ? decorator : "")}[ 8 ]\u001b[0m"); // 8
+                Console.Write($"{(option == 2 ? decorator : "")}[ 9 ]\u001b[0m"); // 9
+                Console.Write($"{(option == 3 ? decorator : "")}[ + ]\u001b[0m\n"); // +
+                Console.Write($"{(option == 4 ? decorator : "")}[ 4 ]\u001b[0m"); // 4
+                Console.Write($"{(option == 5 ? decorator : "")}[ 5 ]\u001b[0m"); // 5
+                Console.Write($"{(option == 6 ? decorator : "")}[ 6 ]\u001b[0m"); // 6
+                Console.Write($"{(option == 7 ? decorator : "")}[ - ]\u001b[0m\n"); // -
+                Console.Write($"{(option == 8 ? decorator : "")}[ 1 ]\u001b[0m"); // 1
+                Console.Write($"{(option == 9 ? decorator : "")}[ 2 ]\u001b[0m"); // 2
+                Console.Write($"{(option == 10 ? decorator : "")}[ 3 ]\u001b[0m"); // 3
+                Console.Write($"{(option == 11 ? decorator : "")}[ * ]\u001b[0m\n"); // *
+                Console.Write($"{(option == 12 ? decorator : "")}[ R ]\u001b[0m"); // R
+                Console.Write($"{(option == 13 ? decorator : "")}[ 0 ]\u001b[0m"); // 0
+                Console.Write($"{(option == 14 ? decorator : "")}[ = ]\u001b[0m"); // =
+                Console.Write($"{(option == 15 ? decorator : "")}[ / ]\u001b[0m\n"); // /
+
+                key = Console.ReadKey(false);
+                Console.WriteLine($"Key pressed: {key.Key}");
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.Escape: // pour sortir de mon programme
+                        isOver = true;
+                        break;
+
+                    case ConsoleKey.LeftArrow:
+                        option = (option == 0) ? 15 : option - 1;
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        option = (option == 15) ? 0 : option + 1;
+                        break;
+
+                    case ConsoleKey.UpArrow:
+                        // si option == 0, 1, 2, 3 alors 12 sinon option -4
+                        if (option == 0 || option == 1 || option == 2 || option == 3)
+                        { option = 12; }
+                        else
+                        { option -= 4; }
+                        break;
+
+                    case ConsoleKey.DownArrow:
+                        // si option == 12, 13, 14, 15 alors option -12 sinon option +4
+                        if (option == 12 || option == 13 || option == 14 || option == 15)
+                        { option -= 12; }
+                        else
+                        { option += 4; }
+                        break;
+
+                    case ConsoleKey.Enter:
+
+                        switch (boutons[option])
+                        {
+                            case "1":
+                            case "2":
+                            case "3":
+                            case "4":
+                            case "5":
+                            case "6":
+                            case "7":
+                            case "8":
+                            case "9":
+                            case "0":
+                                if (isCalculated) // manque opérateur 
+                                {
+                                    Console.Clear();
+                                    previousNumber = currentNumber;
+                                    currentNumber = "";
+                                    currentNumber += boutons[option];
+                                    resultat = currentNumber;
+                                }
+                                else
+                                {
+                                    Console.Clear();
+                                    currentNumber += boutons[option];
+                                    resultat = currentNumber;
+                                }
+
+                                break;
+
+                            case "+":
+                                if (operateur == "")
+                                {
+                                    Console.Clear();
+                                    previousNumber = currentNumber;
+                                    currentNumber = "";
+                                    resultat = previousNumber;
+                                    operateur = "+";
+                                }
+                                else
+                                {
+                                    resultat = "Err !";
+                                }
+                                break;
+
+                            case "-":
+                                if (operateur == "")
+                                {
+                                    Console.Clear();
+                                    previousNumber = currentNumber;
+                                    currentNumber = "";
+                                    resultat = currentNumber;
+                                    operateur = "-";
+                                }
+                                else
+                                {
+                                    resultat = "Err !";
+                                }
+                                break;
+
+                            case "*":
+                                if (operateur == "")
+                                {
+                                    Console.Clear();
+                                    previousNumber = currentNumber;
+                                    currentNumber = "";
+                                    resultat = currentNumber;
+                                    operateur = "*";
+                                }
+                                else
+                                {
+                                    resultat = "Err !";
+                                }
+
+                                break;
+
+                            case "/":
+                                if (operateur == "")
+                                {
+                                    Console.Clear();
+                                    previousNumber = currentNumber;
+                                    currentNumber = "";
+                                    resultat = currentNumber;
+                                    operateur = "/";
+                                }
+                                else
+                                {
+                                    resultat = "Err !";
+                                }
+                                break;
+
+                            case "R": // RESET de toutes mes valeurs stockées
+                                Console.Clear();
+                                previousNumber = "";
+                                currentNumber = "";
+                                resultat = "";
+                                operateur = "";
+                                break;
+
+                            case "=":
+                                if (operateur != "")
+                                {
+                                    switch (operateur)
+                                    {
+                                        case "*":
+                                            resultat = (double.Parse(previousNumber) * double.Parse(currentNumber)).ToString("0.##");
+                                            break;
+                                        case "+":
+                                            resultat = (double.Parse(previousNumber) + double.Parse(currentNumber)).ToString("0.##");
+                                            break;
+                                        case "-":
+                                            resultat = (double.Parse(previousNumber) - double.Parse(currentNumber)).ToString("0.##");
+                                            break;
+                                        case "/":
+                                            if (currentNumber != "0")
+                                            {
+                                                resultat = (double.Parse(previousNumber) / double.Parse(currentNumber)).ToString("0.##");
+                                            }
+                                            else
+                                            {
+                                                resultat = "Erreur !";
+                                            }
+
+                                            break;
+
+                                    }
+
+                                }
+
+                                Console.Clear();
+                                currentNumber = resultat.ToString();
+                                isCalculated = true;
+                                operateur = "";
+
+                                break;
+
+                        }
+
+                        break;
+                }
 
 
-            //// En fonction de l'opérateur choisi, déclenche la fonction correspondante 
-            //if (operateur == "+")
-            //{
-            //    Console.WriteLine(Addition(nombre1, nombre2));
-            //}
-            //else if (operateur == "-")
-            //{
-            //    Console.WriteLine(Soustraction(nombre1, nombre2));
-            //}
-            //else if (operateur == "*")
-            //{
-            //    Console.WriteLine(Multiplication(nombre1, nombre2));
-            //}
-            //else if (operateur == "/" && nombre2 == 0)
-            //{
-            //    Console.WriteLine("La division par 0 n'est pas possible ");
-            //}
-            //else if (operateur == "/")
-            //{
-            //    Console.WriteLine(Division(nombre1, nombre2));
-            //}
+                Console.SetCursorPosition(left, 10);
+                Console.WriteLine("CONTROLE");
+                Console.WriteLine("CurrentNumber = " + currentNumber); // le problème intervient quand j'ai plusieurs chiffres à la suite dans current après un résultat
+                Console.WriteLine("Previous = " + previousNumber);
+                Console.WriteLine("Opérateur = " + operateur);
+                Console.WriteLine("{0:D2}", option);
+
+            }
+            while (!isOver);
 
 
-            //// DOCUMENTATION 
-            //+---------------------------+
-            //| [ 1,264.45              ] |
-            //+---------------------------+
-            //|                           |
-            //| [ ( ] [ ) ] [sqr] [ / ] |
-            //|                           |
-            //| [ 7 ] [ 8 ] [ 9 ] [ * ] |
-            //|                           |
-            //| [ 4 ] [ 5 ] [ 6 ] [ - ] |
-            //|                           |
-            //| [ 1 ] [ 2 ] [ 3 ] [ + ] |
-            //|                           |
-            //| [ 0 ] [ . ] [+/-] [ = ] |
-            //|                           |
-            //+---------------------------+
-
-            // A réutiliser pour entrer mes chiffres ?
-            //Console.WriteLine("First Name: ");
-            //Console.WriteLine("Last Name: ");
-            //Console.WriteLine("Badge Number: ");
-            //Console.SetCursorPosition(12, 0);
-            //string fname = Console.ReadLine();
-            //Console.SetCursorPosition(11, 1);
-            //string lname = Console.ReadLine();
-            //Console.SetCursorPosition(14, 2);
-            //string badge = Console.ReadLine();
-
-            // 
-
-            //string[] boutons = ["7", "8", "9"];
-
-            //ConsoleKeyInfo key;
-            //key = Console.ReadKey(true);
-
-            ////Console.Write(" [ " + boutons[0] + " ] ");
-            ////Console.Write(" [ " + boutons[1] + " ] ");
-            ////Console.Write(" [ " + boutons[2] + " ] ");
-
-            //switch (key.Key)
-            //{
-            //    case ConsoleKey.LeftArrow:
-            //        
-
-            //}
-
-            //https://learn.microsoft.com/en-us/dotnet/api/system.consolekeyinfo.key?view=net-9.0
-            //    ConsoleKeyInfo cki;
-            //    // Prevent example from ending if CTL+C is pressed.
-            //    Console.TreatControlCAsInput = true;
-
-            //    Console.WriteLine("Press any combination of CTL, ALT, and SHIFT, and a console key.");
-            //    Console.WriteLine("Press the Escape (Esc) key to quit: \n");
-            //    do
-            //    {
-            //        cki = Console.ReadKey();
-            //        Console.Write(" --- You pressed ");
-            //        if ((cki.Modifiers & ConsoleModifiers.Alt) != 0) Console.Write("ALT+");
-            //        if ((cki.Modifiers & ConsoleModifiers.Shift) != 0) Console.Write("SHIFT+");
-            //        if ((cki.Modifiers & ConsoleModifiers.Control) != 0) Console.Write("CTL+");
-            //        Console.WriteLine(cki.Key.ToString());
-            //    } while (cki.Key != ConsoleKey.Escape);
-
-
-            //https://github.com/ricardogerbaudo/Console.InteractiveMenu/blob/main/Program.cs
-            //Console.Clear();
-            //Console.OutputEncoding = Encoding.UTF8;
-            //Console.CursorVisible = false;
-            //Console.ForegroundColor = ConsoleColor.Cyan;
-            //Console.WriteLine("Welcome to the world of C#!");
-            //Console.ResetColor();
-            //Console.WriteLine("\nUse ⬆️  and ⬇️  to navigate and press \u001b[32mEnter/Return\u001b[0m to select:");
-            //(int left, int top) = Console.GetCursorPosition();
-            //var option = 1;
-            //var decorator = "✅ \u001b[32m";
-            //ConsoleKeyInfo key;
-            //bool isSelected = false;
-
-            //while (!isSelected)
-            //{
-            //    Console.SetCursorPosition(left, top);
-
-            //    Console.WriteLine($"{(option == 1 ? decorator : "   ")}Option 1\u001b[0m");
-            //    Console.WriteLine($"{(option == 2 ? decorator : "   ")}Option 2\u001b[0m");
-            //    Console.WriteLine($"{(option == 3 ? decorator : "   ")}Option 3\u001b[0m");
-
-            //    key = Console.ReadKey(false);
-
-            //    switch (key.Key)
-            //    {
-            //        case ConsoleKey.UpArrow:
-            //            option = option == 1 ? 3 : option - 1;
-            //            break;
-
-            //        case ConsoleKey.DownArrow:
-            //            option = option == 3 ? 1 : option + 1;
-            //            break;
-
-            //        case ConsoleKey.Enter:
-            //            isSelected = true;
-            //            break;
-            //    }
-            //}
-
-            //Console.WriteLine($"\n{decorator}You selected Option {option}");
-            //Console.ReadLine();
 
         }
-
     }
-    }
+}
 
