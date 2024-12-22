@@ -76,6 +76,7 @@ namespace MyApp
                 Console.SetCursorPosition(left, top);
 
                 Console.WriteLine("Utilisez les flêches du clavier pour choisir une touche et entrée pour valider votre choix : \n");
+
                 Console.WriteLine(resultat + "\n");
                 //Console.WriteLine(resultat);
 
