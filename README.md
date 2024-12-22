@@ -2,7 +2,7 @@
 
 Dans le cadre d'un exercice, j'ai commencé à coder une calculatrice qui s'affiche dans la console !
 
-__Fonctionnalités :__
+__Fonctionnalités :__ \
 Navigation entre les boutons avec les flêches ↑→↓← \
 Validation des choix par la touche Entrée \
 ESC pour sortir du programme 
